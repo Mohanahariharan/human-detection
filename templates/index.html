@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Object Detection Camera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        #videoFeed {
+            border: 2px solid #ddd;
+            margin-bottom: 20px;
+            background-color: #000;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        #startBtn {
+            background-color: #4CAF50;
+        }
+        #startBtn:hover {
+            background-color: #45a049;
+        }
+        #stopBtn {
+            background-color: #f44336;
+        }
+        #stopBtn:hover {
+            background-color: #d32f2f;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 18px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .status-on {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .status-off {
+            background-color: #f44336;
+            color: white;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        .yolo-color {
+            background-color: #00ff00;
+        }
+        .roboflow-color {
+            background-color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Object Detection Camera</h1>
+        <img id="videoFeed" src="{{ url_for('video_feed') }}" width="576" height="576">
+        
+        <div class="controls">
+            <button id="startBtn">Start Camera</button>
+            <button id="stopBtn">Stop Camera</button>
+        </div>
+        
+        <div id="status" class="status-off">Status: Camera Off</div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color yolo-color"></div>
+                <span>YOLO Detections</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color roboflow-color"></div>
+                <span>Roboflow Detections</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        
+        startBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=start'
+                });
+                if (response.ok) {
+                    statusDiv.textContent = 'Status: Camera On';
+                    statusDiv.className = 'status-on';
+                }
+            } catch (error) {
+                console.error('Error starting camera:', error);
+            }
+        });
+        
+        stopBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=stop'
+                });
+                if (response.ok) {
+                    statusDiv.textContent = 'Status: Camera Off';
+                    statusDiv.className = 'status-off';
+                }
+            } catch (error) {
+                console.error('Error stopping camera:', error);
+            }
+        });
+    </script>
+</body>
+</html>
