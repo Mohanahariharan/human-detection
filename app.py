@@ -60,6 +60,10 @@ def init_camera():
             cap = cv2.VideoCapture(camera_index)
             if cap.isOpened():
                 logger.info(f"Camera opened at index {camera_index}")
+                try:
+                    print("camera successfully")
+                except:
+                    print("error 500")
                 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 96)
                 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 96)
                 return True
